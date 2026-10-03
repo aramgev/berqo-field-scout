@@ -1,4 +1,8 @@
 This is an Expo/React Native mobile application. Prioritize mobile-first patterns, performance, and cross-platform compatibility.
+## Maintain the technical source
+
+For changes affecting behavior, architecture, model/training evidence, dependencies, data/privacy, deployment or integration, update `docs/TECHNICAL_ARCHITECTURE.md` in the same task. Update diagram definitions in `scripts/export-architecture.py` as needed and regenerate `output/pdf/Berqo_Technical_Architecture.pdf` and `docs/diagrams/*.svg`. Visually check the PDF. Keep implemented, measured, pending, demo and future features distinct. Keep the jury APK link in `docs/JURY_SHARE.md` and README current. NotebookLM uploads are snapshots and need replacement after an update. This rule also lives in `.cursor/rules/architecture-document.mdc` for Cursor.
+
 
 ## Expo has changed — do not trust your training data
 

@@ -1,25 +1,54 @@
 {
   "expo": {
-    "name": "BerqoHackathon",
-    "slug": "BerqoHackathon",
-    "version": "1.0.0",
+    "name": "Berqo",
+    "slug": "berqo-field-scout",
+    "version": "1.0.4",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/berqo-logo.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true
     },
     "android": {
+      "versionCode": 5,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundColor": "#F7F5EF",
+        "foregroundImage": "./assets/berqo-logo.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.berqo.fieldscout"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/berqo-logo.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-asset",
+      "expo-sharing",
+      "onnxruntime-react-native",
+      "./plugins/withOnnxGradleCompat",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Allow Berqo to photograph apricot leaves and fruit.",
+          "photosPermission": "Choose apricot photos to inspect offline.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow Berqo to use your current orchard location for weather and Field Passports."
+        }
+      ]
+    ],
+    "scheme": "berqo-scout",
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a98fda69-4934-40d4-8709-03c0cb77b195"
+      }
+    },
+    "owner": "aram_am"
   }
 }

@@ -39,3 +39,20 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Training data and local environments must never enter the public repository.
+.venv/
+ml/datasets/*
+!ml/datasets/.gitkeep
+ml/outputs/*
+!ml/outputs/.gitkeep
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+tmp/
+/AgriVision-Apricot.zip
+/apricot-crop-pack.zip
+/Cursor/
+/.claude/

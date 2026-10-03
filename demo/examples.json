@@ -1,0 +1,51 @@
+{
+  "modelVersion": "0.1.0",
+  "selection": "Illustrative held-out examples selected for rehearsal, not an unbiased accuracy estimate. Mobile JPEG processing may change scores.",
+  "examples": [
+    {
+      "file": "healthy.jpg",
+      "datasetLabel": "healthy",
+      "predictedClass": "healthy",
+      "confidence": 0.9956331849098206,
+      "margin": 0.9912756783887744,
+      "accepted": true,
+      "originalSha256": "3770375485efbd1ddd4a56a4233d308355a353220fd6da0ec57183ea26675186"
+    },
+    {
+      "file": "brown_rot.jpg",
+      "datasetLabel": "brown_rot",
+      "predictedClass": "brown_rot",
+      "confidence": 0.9999188184738159,
+      "margin": 0.9998574924102286,
+      "accepted": true,
+      "originalSha256": "dbc8dbce634df16cd2059a1a86f4c51d1771ba69ed7d32b9144b2fd7e8bf983b"
+    },
+    {
+      "file": "shot_hole_leaves.jpg",
+      "datasetLabel": "shot_hole_leaves",
+      "predictedClass": "shot_hole_leaves",
+      "confidence": 0.9999982118606567,
+      "margin": 0.9999968055174122,
+      "accepted": true,
+      "originalSha256": "2b7417f901f289babae7570b89bffb2177b6e3ac54644e3b8aaed24facd3d5bf"
+    },
+    {
+      "file": "shot_hole_fruit.jpg",
+      "datasetLabel": "shot_hole_fruit",
+      "predictedClass": "shot_hole_fruit",
+      "confidence": 0.9985381364822388,
+      "margin": 0.9970917856553569,
+      "accepted": true,
+      "originalSha256": "d60e716716ebe7d93166581e8611010b718a5395eb9ef1163e7f945790295d3b"
+    },
+    {
+      "file": "uncertain_apricot.jpg",
+      "datasetLabel": "healthy",
+      "predictedClass": "shot_hole_fruit",
+      "confidence": 0.5383083820343018,
+      "margin": 0.07687342166900635,
+      "accepted": false,
+      "originalSha256": "ef017cfc18561c91f917b34ffefc802b3da6b14e9732939fb72b61ed04eb388a"
+    }
+  ]
+}

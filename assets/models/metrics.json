@@ -1,0 +1,91 @@
+{
+  "accuracy": 0.8589743589743589,
+  "macroF1": 0.8743111548976058,
+  "testCount": 78,
+  "perClass": {
+    "healthy": {
+      "precision": 0.7333333333333333,
+      "recall": 0.9166666666666666,
+      "f1": 0.8148148148148148,
+      "testCount": 24
+    },
+    "brown_rot": {
+      "precision": 1.0,
+      "recall": 0.8571428571428571,
+      "f1": 0.923076923076923,
+      "testCount": 7
+    },
+    "shot_hole_leaves": {
+      "precision": 0.9545454545454546,
+      "recall": 1.0,
+      "f1": 0.9767441860465117,
+      "testCount": 21
+    },
+    "shot_hole_fruit": {
+      "precision": 0.9,
+      "recall": 0.6923076923076923,
+      "f1": 0.7826086956521738,
+      "testCount": 26
+    }
+  },
+  "confusionMatrix": [
+    [
+      22,
+      0,
+      0,
+      2
+    ],
+    [
+      0,
+      6,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      21,
+      0
+    ],
+    [
+      8,
+      0,
+      0,
+      18
+    ]
+  ],
+  "classes": [
+    "healthy",
+    "brown_rot",
+    "shot_hole_leaves",
+    "shot_hole_fruit"
+  ],
+  "validationMacroF1": 0.8572472710014238,
+  "temperature": 1.0,
+  "confidenceThreshold": 0.8,
+  "thresholdValidationPassed": true,
+  "trainingSeconds": 98.88095307350159,
+  "device": "cpu",
+  "counts": {
+    "train": {
+      "healthy": 109,
+      "brown_rot": 33,
+      "shot_hole_leaves": 96,
+      "shot_hole_fruit": 118
+    },
+    "val": {
+      "healthy": 24,
+      "brown_rot": 7,
+      "shot_hole_leaves": 21,
+      "shot_hole_fruit": 26
+    },
+    "test": {
+      "healthy": 24,
+      "brown_rot": 7,
+      "shot_hole_leaves": 21,
+      "shot_hole_fruit": 26
+    }
+  },
+  "onnxParityMaxError": 1.621246337890625e-05,
+  "modelBytes": 6098545
+}
