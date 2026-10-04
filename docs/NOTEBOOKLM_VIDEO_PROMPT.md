@@ -1,5 +1,7 @@
 # NotebookLM technical video instructions
 
+Version 1.0.5 addition: explain the independent Guided Inspection collection, one photo for each of up to five user-selected trees, unchanged sequential offline AI, automatic saving of added entries, uncertainty-preserving photo counts, and optional weather entry with a historical forecast snapshot. Show the readable report's opt-in coordinates, native text sharing and self-contained HTML photo attachment. Do not claim a validated orchard sampling protocol, disease prevalence, healthy trees, a risk prediction, automatic report delivery, or a functioning agronomist backend. Preserve the original one-photo workflow in the explanation. Distinguish new phone tests still pending in the architecture source from already verified behavior.
+
 Upload output/pdf/Berqo_Technical_Architecture.pdf as a source to a new NotebookLM notebook. The matching Markdown source docs/TECHNICAL_ARCHITECTURE.md can also be uploaded. The PDF contains rendered diagrams and selectable text. Upload assets/berqo-logo.png separately if you want the original brand image as another source. These files contain technical project details, not personal phone coordinates or farmer photos.
 
 In Studio, choose Video Overview, use the Explainer format, and paste the following steering prompt. Select English or Armenian as desired. Available controls and generation time depend on your account. Review factual claims and labels before submitting the generated video to the jury. Add a separate real app screen recording to demonstrate behavior.

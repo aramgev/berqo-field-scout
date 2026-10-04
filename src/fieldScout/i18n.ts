@@ -1,5 +1,13 @@
 import { Language } from './domain';
 export const en = {
+  collections: 'Guided inspections', newCollection: 'Start guided inspection', collectionHelp: 'Choose up to five different trees. Upload one close photo per tree. Five is a starting point, not a validated orchard sampling protocol. Your single-photo inspection remains separate.',
+  tree: 'Tree', sampled: 'Trees sampled', suspiciousPhotos: 'Photos with possible symptoms', noSymptomsPhotos: 'Photos with no obvious supported symptoms', inconclusivePhotos: 'Inconclusive photos',
+  samplingLimit: 'These results describe sampled photos only. They do not establish orchard disease prevalence or confirm tree health.',
+  addTree: 'Analyze & add this tree', removeTree: 'Remove last tree / retake', finishInspection: 'Finish inspection', completeInspection: 'Finished', inProgressInspection: 'In progress', inspectionState: 'Inspection status',
+  savedAutomatically: 'Each added tree is saved on this phone. You can leave and reopen this inspection.', reportTitle: 'Field report for expert review', shareReport: 'Share readable report with photos', shareTextReport: 'Share text summary',
+  includeCoordinates: 'Include orchard coordinates in this report', reportHelp: 'The photo report is a self-contained HTML file. Your recipient can open it in a browser. Text sharing sends the summary without photos. Choose a recipient you trust.',
+  reportReviewHelp: 'Sharing opens the phone share menu. No expert has automatically received or reviewed this report.', forecastSnapshot: 'Forecast downloaded at inspection start', weatherSnapshotHelp: 'Historical forecast snapshot, not observed weather or a validated disease-risk prediction.',
+  weatherInspection: 'Start a weather-informed inspection', inspectionNote: 'Save inspection note', noCollections: 'No guided inspections yet.',
   useGps: 'Use phone GPS & get forecast', gpsHelp: 'Use GPS while at your orchard. Coordinates are sent to Open-Meteo for the forecast. You can also enter a different orchard manually.',
   gpsLocation: 'Phone location', manualLocation: 'Manual location', defaultLocation: 'Default Armavir location', gpsAccuracy: 'Location accuracy', locating: 'Finding your location…',
   gpsDenied: 'Allow location while using Berqo, or enter orchard coordinates in Settings.', gpsOff: 'Turn on phone Location, then try again.', gpsTimeout: 'A fresh location fix took too long. Try outside with a clear view of the sky, or enter coordinates in Settings.',
@@ -43,6 +51,14 @@ export const en = {
 } as const;
 export type TextKey = keyof typeof en;
 export const hy: Record<TextKey, string> = {
+  collections: 'Ուղղորդված զննումներ', newCollection: 'Սկսել ուղղորդված զննում', collectionHelp: 'Ընտրեք մինչև հինգ տարբեր ծառ։ Յուրաքանչյուրից վերբեռնեք մեկ մոտիկ լուսանկար։ Հինգը մեկնարկային թիվ է, ոչ թե այգու զննման հաստատված մեթոդ։ Մեկ լուսանկարի զննումը մնում է առանձին։',
+  tree: 'Ծառ', sampled: 'Զննված ծառեր', suspiciousPhotos: 'Հնարավոր ախտանիշներով լուսանկարներ', noSymptomsPhotos: 'Առանց ակնհայտ ճանաչվող ախտանիշների լուսանկարներ', inconclusivePhotos: 'Անորոշ լուսանկարներ',
+  samplingLimit: 'Արդյունքները վերաբերում են միայն ընտրված լուսանկարներին։ Դրանք չեն որոշում հիվանդության տարածվածությունն այգում կամ հաստատում ծառերի առողջությունը։',
+  addTree: 'Վերլուծել և ավելացնել ծառը', removeTree: 'Հեռացնել վերջին ծառը / կրկնել', finishInspection: 'Ավարտել զննումը', completeInspection: 'Ավարտված', inProgressInspection: 'Ընթացքի մեջ', inspectionState: 'Զննման կարգավիճակ',
+  savedAutomatically: 'Ավելացված յուրաքանչյուր ծառը պահպանվում է հեռախոսում։ Կարող եք դուրս գալ և կրկին բացել զննումը։', reportTitle: 'Դաշտային հաշվետվություն մասնագետի համար', shareReport: 'Կիսվել հաշվետվությամբ և լուսանկարներով', shareTextReport: 'Կիսվել տեքստային ամփոփմամբ',
+  includeCoordinates: 'Ներառել այգու կոորդինատները հաշվետվության մեջ', reportHelp: 'Լուսանկարներով հաշվետվությունը ինքնուրույն HTML ֆայլ է՝ դիտարկիչով բացելու համար։ Տեքստային տարբերակը չունի լուսանկարներ։ Ընտրեք վստահելի ստացողի։',
+  reportReviewHelp: 'Բացվում է հեռախոսի կիսվելու ընտրացանկը։ Ոչ մի մասնագետ ավտոմատ չի ստացել կամ ստուգել այս հաշվետվությունը։', forecastSnapshot: 'Զննման սկզբում ներբեռնված կանխատեսում', weatherSnapshotHelp: 'Պահպանված պատմական կանխատեսում է, ոչ փաստացի եղանակ կամ հիվանդության ռիսկի հաստատված գնահատում։',
+  weatherInspection: 'Սկսել եղանակով ուղղորդված զննում', inspectionNote: 'Պահպանել զննման նշումը', noCollections: 'Ուղղորդված զննումներ դեռ չկան։',
   useGps: 'GPS տեղանք և եղանակի կանխատեսում', gpsHelp: 'GPS-ն օգտագործեք այգում գտնվելիս։ Կոորդինատները փոխանցվում են Open-Meteo-ին։ Այլ այգու տեղանքը կարող եք նշել ձեռքով։',
   gpsLocation: 'Հեռախոսի տեղանքը', manualLocation: 'Ձեռքով նշված տեղանք', defaultLocation: 'Լռելյայն՝ Արմավիր', gpsAccuracy: 'Տեղանքի ճշտություն', locating: 'Որոշվում է ձեր տեղանքը…',
   gpsDenied: 'Թույլատրեք տեղանքը հավելվածն օգտագործելիս, կամ նշեք կոորդինատները կարգավորումներում։', gpsOff: 'Միացրեք հեռախոսի տեղորոշումը և կրկին փորձեք։', gpsTimeout: 'Տեղորոշումը շատ երկար տևեց։ Փորձեք բաց երկնքի տակ կամ նշեք կոորդինատները կարգավորումներում։',

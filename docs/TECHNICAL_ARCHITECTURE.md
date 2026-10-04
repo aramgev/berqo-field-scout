@@ -2,13 +2,15 @@
 
 Apricot Field Scout | Standalone hackathon MVP | Android-first React Native
 
-Maintained source document for technical reviewers and NotebookLM. Updated: 4 October 2026, Asia/Yerevan. Application version: 1.0.4. Bundled crop-pack version: 0.1.0. The uploaded Berqo bird-and-apricot logo is used unchanged in the launcher and application header.
+Maintained source document for technical reviewers and NotebookLM. Updated: 4 October 2026, Asia/Yerevan. Application version: 1.0.5. Bundled crop-pack version: 0.1.0. The uploaded Berqo bird-and-apricot logo is used unchanged in the launcher and application header.
 
 ## 1. Product and delivered scope
 
 Berqo helps an apricot grower inspect a photo, understand a possible visible problem, preserve evidence in a Field Passport, and consider weather-based inspection reminders. The mobile app operates without an account or a private Berqo service. Core photo classification and saved records work offline. English and Armenian interfaces are included.
 
 The farmer can upload an existing photo or optionally take one, run local AI, add a note, save a Passport, reopen it later, and share the photo or Passport JSON with an expert. Phone location supplies coordinates for a real weather forecast. A manual orchard location remains available for people away from the orchard or without location permission.
+
+Version 1.0.5 adds a standalone Guided Inspection collection, a weather-to-inspection entry button, and readable reports. The original single-photo inspection, analysis, saving and reopening workflow remains available independently. Guided inspections use the same classifier without additional training or dependencies. Collections can be started without weather, from the dedicated collection list, or from a weather reminder.
 
 This is a research MVP with four supported image classes: healthy, brown rot, shot hole on leaves, and shot hole on fruit. A prediction is presented as a possible finding, not a definitive diagnosis. The app does not identify every apricot disorder. It does not prescribe pesticide products, dosages, or an automatic irrigation volume.
 
@@ -29,6 +31,7 @@ The mobile stack is Expo SDK 57, React Native 0.86.3, React 19.2.3, TypeScript, 
 - src/app/: route wrappers and navigation layout for home, inspection, result, history, settings, and a saved Passport.
 - src/fieldScout/ui/: shared screens and action/state coordination.
 - src/fieldScout/domain.ts: typed observations and replaceable service contracts.
+- src/fieldScout/inspection.ts and report.ts: bounded collection updates, evidence summaries, forecast snapshots and safe readable report generation.
 - src/fieldScout/safety.ts and ml/preprocess.ts: score decisions and image tensor creation.
 - src/fieldScout/forecast.ts, risk.ts, and data/: forecast validation and bilingual advice.
 - src/fieldScout/adapters/: ONNX classifier, file storage, phone location, weather HTTP client, and demo sync.
@@ -74,7 +77,15 @@ The FileObservationRepository stores one JSON file per observation, with a separ
 
 Classification and photo recording require no network. Saved records survive app closing and reopening. An APK update with the same package and signing key retains app data. Uninstalling or clearing app data deletes local records, so important evidence should be exported first. JSON export omits the private local image URI and refers to a separately shared photo file. Notes and coordinates are included in a shared Passport.
 
-The recorded coordinates are the selected orchard location at analysis time. They are not extracted from the uploaded photo's EXIF and should not be described as proof of where or when the photograph was taken.
+The recorded coordinates are the selected orchard location at analysis time. They are not extracted from the uploaded photo's EXIF and should not be described as proof of where or when the photograph was taken. Guided collections freeze the selected orchard location at collection creation; moving or changing Settings does not silently relabel earlier samples.
+
+![Guided inspection and report](diagrams/inspection.svg)
+
+OrchardInspection is a separate schemaVersion 1 record with an ID, creation timestamp, selected orchard location, in-progress/complete status, optional note, observation array and optional forecast snapshot/reason. The app stores all collections in inspections.json, separate from the existing observations directory. Each successfully added tree receives a persistent JPEG and the unchanged safety decision. Single-photo drafts, notes and Passports are not consumed by collection actions. A rejected quality check leaves the pending collection photo available for replacement and does not add a tree.
+
+Users choose one photo for each of up to five different trees, analyze sequentially, remove the last entry for a retake, and finish after one to five samples. Added entries are saved immediately and incomplete collections can be resumed after restart. Inspection notes need the explicit save-note button or Finish; an unanalysed selected photo is an in-memory draft. Finished collections are read-only. Removed entries leave their JPEG in the local photo directory; automatic cleanup and collection deletion are future work.
+
+The summary counts photos with possible supported symptoms, photos with no obvious supported symptoms, and inconclusive/unavailable photos. Low-confidence healthy-looking predictions remain inconclusive. Five is a guided starting point, not a validated sampling protocol. The app does not calculate orchard infection prevalence, declare trees healthy, aggregate scores into a disease probability, or assign an unvalidated low/medium/high orchard risk. Distinct-tree selection is a user instruction, not automatically verified.
 
 ## 7. Phone GPS, forecast, and suggestions
 
@@ -90,11 +101,17 @@ The interface shows six upcoming hourly readings, a next-48-hour temperature ran
 
 Suggestions are transparent rules over future forecast hours, separate from photo classification. Below-zero temperatures prompt checking local conditions and growth stage with an agronomist. Any forecast precipitation prompts inspecting leaves and fruit after wet conditions. When at least 24 future hourly readings are available and none predict precipitation, the app suggests checking root-zone soil moisture before adjusting irrigation, especially for young trees. The rules cover the available next 48 hours. Rainfall alone is not a leaf-wetness measurement or a disease forecast; a dry forecast alone does not measure irrigation needs. Advice links to UC IPM sources.
 
+Weather cards now offer Start a weather-informed inspection. Each reminder can pass its bilingual explanation to the new standalone collection. At creation, a forecast is copied only if coordinates match, its download age is zero to 24 hours and it contains future readings. Missing, wrong-location, future-dated, exhausted and stale forecasts are omitted. Demo snapshots remain explicitly marked. A stored snapshot is historical forecast evidence, not observed weather or a continuously refreshed risk estimate; later forecasts do not rewrite it.
+
 ## 8. Sync, sharing, and data boundaries
 
 ObservationSync works through a SyncAdapter. The current LocalDemoSync adapter simulates delivery and saves a local receipt. It sends nothing to an agronomist or a server. A failed queued record retains its error and can be retried. A successful demonstration receipt changes sync status but does not mark expert review submitted. Only a real adapter response explicitly accepting review may change review status to submitted.
 
 Manual operating-system sharing is real: the user can send Passport JSON and a photo to a recipient they choose. This differs from the simulated expert queue. The app does not contain authentication, push notifications, an agronomist portal, analytics collection, or a production expert-review API.
+
+Readable report actions are available on both a saved single-photo Passport and a guided collection. The on-screen preview includes sample counts, dated individual findings, model scores and versions, notes, limitations and any collection forecast snapshot. Coordinates are excluded by default and require an explicit switch for each report screen. Existing JSON export still includes its previously documented coordinates; the new privacy switch applies to the readable report only.
+
+Share text summary uses React Native Share to open the system text-sharing menu without photos. Share readable report with photos produces a self-contained HTML file and opens Expo Sharing. Each evidence photo is reduced to a 480-pixel-wide JPEG thumbnail, embedded as base64 and captioned by tree index. Notes and text are HTML-escaped, base64 values are validated and no scripts, remote image requests or private file URIs are included. Recipients open the HTML attachment in a browser; compatibility with particular messenger/browser combinations still requires manual verification. HTML was chosen to avoid a new PDF-generation native dependency. The report does not claim delivery or expert review based on opening the share menu. Export files stay locally under exports until app data is cleared; there is no automatic retention policy.
 
 Personal photos, notes, and coordinates are not part of the source-code distribution. Dataset ZIPs, trained checkpoints, local tool downloads, temporary device snapshots, secrets, and build outputs are excluded from EAS upload or version-control distribution as configured. The bundled model and license attribution are included. The public Open-Meteo endpoint is used for the non-commercial hackathon; commercial deployment requires reviewing provider terms and choosing an appropriate service plan.
 
@@ -118,15 +135,21 @@ Artifact verification checks the APK signature, ZIP integrity, exact bundled mod
 
 Type checking and lint pass for the branding change. The preceding behavior update passed all 15 application tests and all 21 Expo Doctor checks. Tests cover score gating, stable softmax, preprocessing, bilingual completeness, persistence contracts, retry/demo-review semantics, forecast parsing, local dates, stale forecasts, weather suggestions, and cache/location matching. Dataset-pipeline tests also exist.
 
+Version 1.0.5 passes typecheck, lint, native ONNX autolinking and all 20 application tests. Five new tests cover uncertainty-preserving counts, collection limits/immutability, forecast snapshot validity, coordinate privacy/bilingual report content, and escaped self-contained HTML. Existing single-photo inference and saving actions retain their behavior. New collection and report phone acceptance tests are pending until the new APK is installed; automated tests do not prove a messenger received the attachment.
+
 Physical evidence before the branding-only update: version 1.0.2 passed user-confirmed offline photo classification and Passport save/reopen. Version 1.0.3 installed and launched without app-scoped startup errors; native UI inspection confirmed a real phone-location fix, reported accuracy of 33 metres, and a freshly downloaded forecast in Asia/Yerevan. The new forecast cache/reopen test still awaits user confirmation. One saved observation displayed 112 ms preprocessing plus inference; that is a single sample, not a benchmark or a guaranteed latency.
 
 The branded version 1.0.4 / versionCode 5 completed EAS build c4cdb281-19e6-44fe-bc21-a0f311e43ea1. Its 75,177,401-byte APK passed v2 signature verification, bundled model/metadata hash checks and ARM64 alignment checks. The Android manifest label is Berqo. This release changes branding, while retaining the preceding model and app behavior. It installed successfully on the same Galaxy S25 and launched with no app-scoped startup error. The jury-pack script checks release metadata and the verified APK hash before assembling the handoff.
+
+Version 1.0.5 / versionCode 6 completed EAS build 3fc87a87-21ef-424a-b67f-ba18b506b560. The 75,202,189-byte APK passed v2 signature verification, model/metadata hash checks, standalone-bundle checks and ARM64 alignment checks. SHA-256: 1019e7b26f28a75f342928ba28637b465b9454f990d0d01edacddd763c6ada5c. It retains package com.berqo.fieldscout and the same signing key. The USB installation attempt timed out while a Play Protect dialog was open; the phone still reports 1.0.4. The new APK is copied to Downloads/Berqo-1.0.5.apk for user installation. New collection/report phone acceptance is pending. Prior release files are retained locally. The current download link and retention deadline live in docs/JURY_SHARE.md and README; the QR generator reads current release metadata to avoid a stale link.
 
 ## 11. Jury distribution and demonstration
 
 Distribute the latest signed APK using its EAS download link or a shared file. The jury needs a compatible Android phone and installation permission for the app used to open the APK. Expo Go, a developer account, a model download, and an API key are not required. The model is bundled. Do not uninstall an older Berqo build to update it; install the newer APK over it to retain Passports.
 
 For a short demonstration, install the APK, obtain a forecast online at the orchard or use clearly labeled sample weather, then switch to airplane mode. Upload an apricot photo, analyze it, inspect the possible/uncertain finding, add a note, save a Passport, close/reopen, and show the persisted record. Reconnect to demonstrate GPS and the live forecast. Explain that expert sync is a local demonstration and manual sharing is the available real route to an expert.
+
+Then show the independent Guided inspections screen or weather entry button, add photos representing different trees, explain the sampled-photo counts, finish and reopen the collection. Open the readable report preview, show that coordinates are opt-in, and open then cancel native sharing during the demonstration. Actual sample photos used in a video should be labeled as demonstration evidence; reused dataset photos do not constitute a real orchard visit. The report's HTML can be opened locally in a browser and its text summary sent through an installed messaging app by the farmer.
 
 Give the jury the APK link, this PDF, the dataset/license reference, a short real screen recording, and source code if the challenge requires it. A technical explainer generated by NotebookLM complements a real phone demonstration; it does not prove app behavior. Keep a local APK copy because hosted artifact retention can be limited. iPhone-only jurors can watch the demo video or use your Android demonstration device; a working iOS build is not part of this delivery.
 

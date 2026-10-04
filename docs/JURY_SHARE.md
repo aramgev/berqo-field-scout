@@ -1,14 +1,14 @@
 # Share Berqo with the jury
 
-Release: Berqo 1.0.4, Android versionCode 5, ARM64 preview APK, about 75 MB. No Expo Go, developer account, model download, additional training, or AI API key is needed to run it.
+Release: Berqo 1.0.5, Android versionCode 6, ARM64 preview APK, about 75 MB. No Expo Go, developer account, model download, additional training, or AI API key is needed to run it.
 
 ## Fastest route
 
 Send the jury this APK download link:
 
-https://expo.dev/artifacts/eas/b8N82BRnE-Bs4HgRKk-hKUTXQicnFi2UvGlqwB464d0.apk
+https://expo.dev/artifacts/eas/BA65leTci40sa9Q-SrVxiU1ST83Z59dsEpoQ9LSdURA.apk
 
-Build record: https://expo.dev/accounts/aram_am/projects/berqo-field-scout/builds/c4cdb281-19e6-44fe-bc21-a0f311e43ea1
+Build record: https://expo.dev/accounts/aram_am/projects/berqo-field-scout/builds/3fc87a87-21ef-424a-b67f-ba18b506b560
 
 The APK is directly downloadable without an Expo sign-in. It is a standalone Android app. Expo Go's project QR code is not the distribution route for native offline ONNX inference. A download QR image is included in the jury pack; it opens the APK URL.
 
@@ -18,9 +18,9 @@ If an earlier Berqo version is installed, install the update over it; it uses th
 
 ## Files to submit or share
 
-Inside the archive, open START_HERE.md and install Berqo-1.0.4.apk. The technical PDF and video prompt are at its top level.
+Inside the archive, open START_HERE.md and install Berqo-1.0.5.apk. The technical PDF and video prompt are at its top level.
 
-dist/Berqo-Jury-Pack.zip is a ready-to-share archive containing the signed Berqo APK, technical architecture PDF, Markdown architecture source, NotebookLM video prompt, download QR, original logo, demo-photo guide and licensed sample photos. Upload it to your hackathon's submission portal or a shared folder you control, then supply a working download link. A shared ZIP is convenient for all materials; the direct APK link is faster for installation. Preserve the local pack in case hosted build artifacts expire. Current EAS metadata lists expiry as 18 October 2026 at 02:39 Armenia time; share the local APK through your own file hosting if the jury needs later access.
+dist/Berqo-Jury-Pack.zip is a ready-to-share archive containing the signed Berqo APK, technical architecture PDF, Markdown architecture source, NotebookLM video prompt, download QR, original logo, demo-photo guide and licensed sample photos. Upload it to your hackathon's submission portal or a shared folder you control, then supply a working download link. A shared ZIP is convenient for all materials; the direct APK link is faster for installation. Preserve the local pack in case hosted build artifacts expire. Current EAS metadata lists expiry as 18 October 2026 at 03:55 Armenia time; share the local APK through your own file hosting if the jury needs later access.
 
 For a complete submission, add your own real screen-recorded demo and source repository/archive if requested by the challenge. No jury email or message is sent automatically. No source repository has been published by this task. No generated technical video is included yet; the NotebookLM prompt is ready for you to use.
 
@@ -32,6 +32,8 @@ For a complete submission, add your own real screen-recorded demo and source rep
 4. Explain the possible finding, uncertainty policy and expert-confirmation guidance. Try uncertain_apricot.jpg or blank_photo.jpg to show the fallback/quality gate.
 5. Add a note and save a Field Passport. Close and reopen Berqo; reopen the record from Passports.
 6. Reconnect if needed. Show manual Passport/photo sharing. Explain that the expert-review sync queue is a local demonstration and does not send to a real agronomist backend.
+
+Version 1.0.5 adds a separate Guided inspections button. Start there or from a weather reminder, choose different trees, upload and analyze one photo per tree, then Finish after one to five samples. Reopen it from Guided inspections after restarting. Counts refer to photos, not confirmed disease prevalence. Show Share text summary or Share readable report with photos; the latter is a browser-readable HTML attachment with embedded thumbnails. Coordinates are off by default for these readable reports. Do not send to a real recipient during a jury demo unless intended. The original Inspect my apricot flow remains independent.
 
 ## Short message you can copy
 

@@ -1,5 +1,14 @@
 # Delivery validation
 
+## Version 1.0.5 guided inspection update
+
+- Standalone collection records in inspections.json; original single-photo Passport schema and analyze/save workflow retained.
+- Weather-to-collection entry snapshots context; readable text and HTML photo reports omit coordinates by default.
+- Typecheck, lint, native ONNX autolinking and 20 application tests passed, including five new inspection/report safety tests.
+- EAS build 3fc87a87-21ef-424a-b67f-ba18b506b560 FINISHED, version 1.0.5 / versionCode 6. APK 75,202,189 bytes; signature v2, exact model/metadata assets, standalone bundle and ARM64 alignment checks passed.
+- APK SHA-256: 1019e7b26f28a75f342928ba28637b465b9454f990d0d01edacddd763c6ada5c.
+- USB installation timed out while a Play Protect dialog was open; package inspection still shows 1.0.4. New APK copied to Downloads/Berqo-1.0.5.apk for user installation. New collection/report physical acceptance is pending. Browser preview of a generated HTML report was visually checked with an embedded demo photo.
+
 Signed Android release build: `a032a3fe-fbd4-46cb-a3b2-ee8dc15c0062`, version 1.0.2, completed 2026-10-03 21:40 UTC (2026-10-04 in Armenia).
 
 - EAS result: FINISHED, preview APK, Android package `com.berqo.fieldscout`.

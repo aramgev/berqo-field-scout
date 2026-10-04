@@ -2,7 +2,7 @@
   "expo": {
     "name": "Berqo",
     "slug": "berqo-field-scout",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "orientation": "portrait",
     "icon": "./assets/berqo-logo.png",
     "userInterfaceStyle": "light",
@@ -10,7 +10,7 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 5,
+      "versionCode": 6,
       "adaptiveIcon": {
         "backgroundColor": "#F7F5EF",
         "foregroundImage": "./assets/berqo-logo.png"

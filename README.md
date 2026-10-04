@@ -4,13 +4,21 @@ Standalone public-safe React Native app for apricot growers: select/capture a ph
 
 ## Current readiness
 
-The signed standalone Android **1.0.4 ARM64 APK** is ready: [download APK](https://expo.dev/artifacts/eas/b8N82BRnE-Bs4HgRKk-hKUTXQicnFi2UvGlqwB464d0.apk), [build record](https://expo.dev/accounts/aram_am/projects/berqo-field-scout/builds/c4cdb281-19e6-44fe-bc21-a0f311e43ea1). It is approximately 71.7 MiB (75 MB) and targets modern ARM64 Android phones. A local copy is saved as `dist/Berqo-Field-Scout.apk`; preserve it because the hosted build has a retention limit. The preceding 1.0.2 release was installed and tested on a Galaxy S25 running Android 16: the user confirmed model readiness, photo analysis in airplane mode, and saved Passport persistence after reopening. One captured Passport displayed 112 ms for photo processing plus inference; this single observation is not a performance benchmark.
+The signed standalone Android **1.0.5 ARM64 APK** is ready: [download APK](https://expo.dev/artifacts/eas/BA65leTci40sa9Q-SrVxiU1ST83Z59dsEpoQ9LSdURA.apk), [build record](https://expo.dev/accounts/aram_am/projects/berqo-field-scout/builds/3fc87a87-21ef-424a-b67f-ba18b506b560). It is approximately 71.7 MiB (75 MB) and targets modern ARM64 Android phones. A local copy is saved as `dist/Berqo-Field-Scout.apk`; preserve it because the hosted build has a retention limit. The preceding 1.0.2 release was installed and tested on a Galaxy S25 running Android 16: the user confirmed model readiness, photo analysis in airplane mode, and saved Passport persistence after reopening. One captured Passport displayed 112 ms for photo processing plus inference; this single observation is not a performance benchmark.
 
 The application includes a **real trained 6.1 MB apricot model** in `assets/models/`. On 78 held-out dataset images it measured 85.9% accuracy and 87.4% macro-F1; see `assets/models/metrics.json`. This is a random image split, not independent Armenian orchard validation. No mock classifier is substituted. Basic physical Android offline acceptance passed; remaining broader checks are in `docs/DEVICE_CHECKLIST.md`.
 
-Version 1.0.3 is installed on the same phone. Native UI inspection confirms a real phone location fix (±33 m reported accuracy) and a fresh Open-Meteo forecast in Asia/Yerevan. The updated forecast cache/offline reopening check is awaiting user confirmation.
+Version 1.0.3 was checked on the same phone. Native UI inspection confirmed a real phone location fix (±33 m reported accuracy) and a fresh Open-Meteo forecast in Asia/Yerevan. The updated forecast cache/offline reopening check is awaiting user confirmation.
+
+Version 1.0.5 passed lint, typecheck, all 20 application tests and signed APK/model/native alignment checks. Its USB update attempt timed out while Play Protect was open; the phone still reports 1.0.4. The new APK is also in the phone's Downloads/Berqo-1.0.5.apk. New collection/report phone acceptance and a single-photo regression check on this release remain pending manual installation.
 
 ## Quick start
+
+### Guided inspections and readable reports
+
+Version 1.0.5 adds an independent **Guided inspections** screen, also accessible through a weather reminder. Upload and analyze one photo for each of up to five different trees; added entries are saved immediately and can be resumed after reopening. Finish after one to five samples. Counts describe photos and preserve uncertainty; they do not measure orchard infection prevalence. The original single-photo workflow stays separate.
+
+Saved Passports and guided collections offer a readable report preview, **Share text summary**, and **Share readable report with photos**. The photo report is a self-contained HTML attachment with embedded thumbnails for a recipient to open in a browser. Coordinates are excluded by default from these new reports; enable the explicit switch if needed. Existing Passport JSON sharing keeps its previous behavior. No expert receives anything automatically and no new training or dependencies are required.
 
 ```powershell
 npm ci

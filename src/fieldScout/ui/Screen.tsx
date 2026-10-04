@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { ActivityIndicator, Image, Linking, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Image, Linking, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { FieldObservation } from '../domain';
+import { FieldObservation, OrchardInspection } from '../domain';
+import { summarizeInspection } from '../inspection';
+import { reportText } from '../report';
 import { getAdvisory } from '../data/advisories';
 import { evaluateRisk } from '../risk';
 import { useScout } from './Provider';
-type Screen = 'home' | 'inspect' | 'result' | 'history' | 'settings' | 'passport';
+type Screen = 'home' | 'inspect' | 'result' | 'history' | 'settings' | 'passport' | 'collections' | 'collection';
 const colors = { ink: '#193B2B', paper: '#F7F5EF', muted: '#69776D', green: '#285B3E', line: '#E1E6DC', orange: '#F3AB57', pale: '#EDF2E7' };
 function Button({ title, onPress, secondary = false, disabled = false }: { title: string; onPress: () => void; secondary?: boolean; disabled?: boolean }) {
   return <Pressable accessibilityRole="button" accessibilityLabel={title} disabled={disabled} onPress={onPress} style={({ pressed }) => [s.button, secondary && s.secondary, (pressed || disabled) && { opacity: .55 }]}><Text style={[s.buttonText, secondary && { color: colors.ink }]}>{title}</Text></Pressable>;
@@ -44,11 +46,55 @@ function WeatherPanel() {
         </View>)}</Card>}
         <Label>{t('suggestions')}</Label>
         {!evaluateRisk(weather, c.now).length && <Text style={s.body}>{t('calm')}</Text>}
-        {evaluateRisk(weather, c.now).map(risk => <Card key={risk.id} tinted><Label>{risk.severity === 'attention' ? '!' : '↗'} {risk.title[c.language]}</Label><Text style={s.body}>{risk.summary[c.language]}</Text><Source url={risk.sourceUrl} label={t('source')} /><Button secondary title={t('start')} onPress={c.start} disabled={c.busy} /></Card>)}
+        {evaluateRisk(weather, c.now).map(risk => <Card key={risk.id} tinted><Label>{risk.severity === 'attention' ? '!' : '↗'} {risk.title[c.language]}</Label><Text style={s.body}>{risk.summary[c.language]}</Text><Source url={risk.sourceUrl} label={t('source')} /><Button secondary title={t('weatherInspection')} onPress={() => { void c.startCollection(risk.summary); }} disabled={c.busy} /></Card>)}
       </>}
       {weather.source === 'open-meteo' && <Source url="https://open-meteo.com/" label="Open-Meteo · CC BY 4.0" />}
     </>}
     <Button title={t('refresh')} secondary disabled={c.busy} onPress={() => { void c.refreshWeather(); }} />
+    <Button title={t('weatherInspection')} secondary disabled={c.busy} onPress={() => { void c.startCollection(); }} />
+  </>;
+}
+function ReportActions({ items, inspection }: { items: FieldObservation[]; inspection?: OrchardInspection }) {
+  const c = useScout();
+  const [includeLocation, setIncludeLocation] = useState(false);
+  return <Card><Label>{c.t('reportTitle')}</Label><Text style={s.small}>{c.t('reportHelp')}</Text>
+    <View style={s.between}><Text style={[s.body, { flex: 1 }]}>{c.t('includeCoordinates')}</Text><Switch accessibilityLabel={c.t('includeCoordinates')} value={includeLocation} onValueChange={setIncludeLocation} disabled={c.busy} /></View>
+    <Text selectable style={s.small}>{reportText(items, c.language, includeLocation, inspection)}</Text>
+    <Button title={c.t('shareReport')} disabled={c.busy || !items.length} onPress={() => { void c.shareReport(items, includeLocation, inspection); }} />
+    <Button secondary title={c.t('shareTextReport')} disabled={c.busy || !items.length} onPress={() => { void c.shareReport(items, includeLocation, inspection, true); }} />
+  </Card>;
+}
+function CollectionPanel({ inspection }: { inspection: OrchardInspection }) {
+  const c = useScout(), t = c.t;
+  const [note, setNote] = useState(inspection.note);
+  const summary = summarizeInspection(inspection.observations);
+  const photo = c.collectionPhoto?.inspectionId === inspection.id ? c.collectionPhoto.uri : null;
+  return <>
+    <Text style={s.heading}>{t('collections')}</Text><Text style={s.body}>{t('collectionHelp')}</Text>
+    <Card tinted><Label>{t(inspection.status === 'complete' ? 'completeInspection' : 'inProgressInspection')}</Label>
+      <Text style={s.rowTitle}>{t('sampled')}: {inspection.observations.length} / 5</Text>
+      <Text style={s.body}>{t('suspiciousPhotos')}: {summary.suspicious}</Text><Text style={s.body}>{t('noSymptomsPhotos')}: {summary.noSymptoms}</Text><Text style={s.body}>{t('inconclusivePhotos')}: {summary.inconclusive}</Text>
+      <Text style={s.small}>{t('samplingLimit')}</Text><Text style={s.small}>{t('savedAutomatically')}</Text>
+    </Card>
+    {!!inspection.weather && <Card><Label>{t('forecastSnapshot')}</Label><Text style={s.small}>{inspection.weather.fetchedAt} · {inspection.weather.source === 'demo' ? t('demo') : 'Open-Meteo'}</Text><Text style={s.small}>{t('weatherSnapshotHelp')}</Text>{inspection.weatherReason && <Text style={s.body}>{inspection.weatherReason[c.language]}</Text>}</Card>}
+    {inspection.observations.map((item, index) => <Card key={item.id}><Label>{t('tree')} {index + 1}</Label><Image source={{ uri: item.imageUri }} style={s.photo} accessibilityLabel={`${t('tree')} ${index + 1}`} />
+      <Text style={s.rowTitle}>{getAdvisory(item.advisoryId).title[c.language]}</Text>{item.prediction && <Text style={s.small}>{t('confidence')}: {Math.round(item.prediction.confidence * 100)}% · v{item.prediction.modelVersion}</Text>}
+      <Text style={s.small}>{t('warning')}</Text><Button secondary title={t('sharePhoto')} disabled={c.busy} onPress={() => { void c.share(item, true); }} />
+    </Card>)}
+    {inspection.status === 'in_progress' && <>
+      {inspection.observations.length < 5 && <Card><Label>{t('tree')} {inspection.observations.length + 1}</Label><Text style={s.small}>{t('guide')}</Text>
+        {photo && <Image source={{ uri: photo }} style={s.photo} />}
+        <Button title={t('upload')} disabled={c.busy} onPress={() => { void c.choosePhoto(false, inspection.id); }} />
+        <Button secondary title={t('camera')} disabled={c.busy} onPress={() => { void c.choosePhoto(true, inspection.id); }} />
+        {photo && <Button title={t('addTree')} disabled={c.busy} onPress={() => { void c.addCollectionTree(inspection.id); }} />}
+        {!c.metadata && <Text style={s.small}>{t('missingHelp')}</Text>}
+      </Card>}
+      {!!inspection.observations.length && <Button secondary title={t('removeTree')} disabled={c.busy} onPress={() => { void c.editCollection(inspection.id, { removeLast: true }); }} />}
+      <Label>{t('note')}</Label><TextInput accessibilityLabel={t('note')} style={[s.input, s.note]} multiline maxLength={1000} value={note} onChangeText={setNote} />
+      <Button secondary title={t('inspectionNote')} disabled={c.busy} onPress={() => { void c.editCollection(inspection.id, { note }); }} />
+      <Button title={t('finishInspection')} disabled={c.busy || !inspection.observations.length} onPress={() => { void c.editCollection(inspection.id, { note, finish: true }); }} />
+    </>}
+    {!!inspection.observations.length && <ReportActions key={inspection.id} items={inspection.observations} inspection={inspection} />}
   </>;
 }
 function LocationSettings() {
@@ -93,6 +139,7 @@ export function FieldScoutScreen({ screen }: { screen: Screen }) {
         <Card><Label>{t('demo')}</Label><Text style={s.small}>{t('syncDemo')}</Text><Button secondary title={t('queue')} disabled={c.busy} onPress={() => { void c.queue(item); }} /></Card>
         <Text style={s.small}>{t('sharePrivacy')}</Text>
         <Button title={t('export')} secondary disabled={c.busy} onPress={() => { void c.share(item, false); }} /><Button title={t('sharePhoto')} secondary disabled={c.busy} onPress={() => { void c.share(item, true); }} />
+        <ReportActions key={item.id} items={[item]} />
       </> : <>
         <Label>{t('note')}</Label><TextInput style={[s.input, s.note]} multiline placeholder={t('noteHint')} placeholderTextColor={colors.muted} value={c.note} onChangeText={c.setNote} maxLength={1000} />
         <Button title={t('save')} disabled={c.busy} onPress={() => { void c.save(false); }} />
@@ -111,6 +158,7 @@ export function FieldScoutScreen({ screen }: { screen: Screen }) {
         <Label>{t('subtitle')}</Label><Text style={s.hero}>{t('title')}</Text><Text style={s.body}>{t('intro')}</Text>
         <View style={s.orchardArt}><View style={s.sun} /><Text style={s.artTree}>♧</Text><Text style={s.artText}>PRUNUS ARMENIACA</Text><View style={s.fruit1} /><View style={s.fruit2} /><View style={s.fruit3} /></View>
         <Button title={`${t('start')}  →`} onPress={c.start} disabled={c.busy} />
+        <Button title={t('collections')} secondary onPress={() => router.push('/collections')} disabled={c.busy} />
         {!c.metadata && <Card tinted><Text style={s.rowTitle}>{t('modelMissing')}</Text><Text style={s.small}>{t('missingHelp')}</Text><Button secondary title={t('settings')} onPress={() => router.push('/settings')} /></Card>}
         {c.modelError.includes('NATIVE_BUILD_REQUIRED') && <Text style={s.small}>{t('nativeRequired')}</Text>}
         <WeatherPanel />
@@ -126,8 +174,15 @@ export function FieldScoutScreen({ screen }: { screen: Screen }) {
       </>}
       {screen === 'result' && (c.draft ? <><Label>{t('result')}</Label>{finding(c.draft, false)}</> : <Button title={t('start')} onPress={c.start} />)}
       {screen === 'passport' && (() => { const item = c.observations.find(o => o.id === params.id); return item ? <><Label>{t('saved')}</Label>{finding(item, true)}</> : <Text style={s.body}>{t('missingPassport')}</Text>; })()}
+      {screen === 'collections' && <><Text style={s.heading}>{t('collections')}</Text><Text style={s.body}>{t('collectionHelp')}</Text>
+        <Button title={t('newCollection')} disabled={c.busy} onPress={() => { void c.startCollection(); }} />
+        {!c.inspections.length && <Text style={s.body}>{t('noCollections')}</Text>}
+        {c.inspections.map(item => <Button key={item.id} secondary title={`${date(item.createdAt)} · ${item.observations.length}/5 · ${t(item.status === 'complete' ? 'completeInspection' : 'inProgressInspection')}`} onPress={() => router.push(`/scout/${item.id}`)} />)}
+      </>}
+      {screen === 'collection' && (() => { const item = c.inspections.find(inspection => inspection.id === params.id); return item ? <CollectionPanel key={item.id} inspection={item} /> : <Text style={s.body}>{t('missingPassport')}</Text>; })()}
       {screen === 'history' && <>
         <Label>{t('subtitle')}</Label><Text style={s.heading}>{t('history')}</Text>
+        <Button secondary title={t('collections')} onPress={() => router.push('/collections')} />
         {c.observations.length ? c.observations.map(observationRow) : <Text style={s.body}>{t('empty')}</Text>}
         <Button title={t('sync')} disabled={c.busy} onPress={() => { void c.sync(); }} /><Card tinted><Label>{t('demo')}</Label><Text style={s.small}>{t('syncDemo')}</Text></Card>
       </>}

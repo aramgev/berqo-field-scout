@@ -2,6 +2,22 @@
 
 Run on the standalone preview APK, not Expo Go. Fill in results after actual observation. No item below is claimed verified by code export.
 
+## Version 1.0.5 regression and new features
+
+- [ ] Update over 1.0.4 without uninstalling; old Passports remain accessible.
+- [ ] Original Inspect my apricot: upload, analyze offline, save and reopen a new Passport.
+- [ ] Guided inspections: add two different-tree sample photos offline; close/reopen and resume with both entries present.
+- [ ] Add up to five entries; finished collection counts suspicious/no-obvious-symptom/inconclusive photos separately.
+- [ ] Finish early with one or more entries, save a note, reopen; finished records are read-only.
+- [ ] Reject a blank photo without adding an entry; remove last tree and replace it.
+- [ ] Weather reminder opens a separate collection; fresh matching forecast snapshot/reason is retained and demo weather marked.
+- [ ] Readable report preview excludes coordinates until its switch is enabled, both for collection and single-photo Passport.
+- [ ] Share text opens the native share menu; cancel without sending.
+- [ ] Share photo HTML opens the native share menu; inspect saved HTML for embedded images and no private file paths.
+- [ ] Farmer manually sends report to a chosen test recipient; recipient opens attachment in a browser. This requires user action.
+
+## Previous release checks
+
 - [x] Install APK containing real trained crop pack (Galaxy S25, Android 16, v1.0.2, via USB).
 - [x] Airplane mode on; close/reopen the standalone app and reopen the saved Passport (user confirmed).
 - [ ] Switch English/Armenian, close/reopen, confirm preference persists.

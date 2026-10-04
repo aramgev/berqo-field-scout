@@ -1,0 +1,14 @@
+---
+description: Maintain the Berqo NotebookLM architecture source and export with project changes
+alwaysApply: true
+---
+
+When a change affects app behavior, architecture, data flow, privacy, training/model metrics, dependencies, build/distribution or integration:
+- Update docs/TECHNICAL_ARCHITECTURE.md in the same task.
+- Update scripts/export-architecture.py diagram definitions if the represented flow changes.
+- Regenerate output/pdf/Berqo_Technical_Architecture.pdf and docs/diagrams/*.svg using scripts/export-architecture.py; use a Python environment with reportlab.
+- Visually inspect the regenerated PDF and preserve selectable text for NotebookLM.
+- Keep implemented, measured, pending validation, simulated and future features clearly distinct; never promote a pending result to a verified claim.
+- Update docs/JURY_SHARE.md and README.md if the recommended APK/version changes.
+- Refresh the NotebookLM prompt when the source's intended video narrative changes.
+- Remind the user that an uploaded NotebookLM source is a snapshot and must be replaced after document updates.

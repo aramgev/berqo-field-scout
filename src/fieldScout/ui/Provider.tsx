@@ -1,12 +1,15 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
-import { Alert, AppState, Platform } from 'react-native';
+import { Alert, AppState, Platform, Share } from 'react-native';
+import * as FS from 'expo-file-system/legacy';
 import * as Network from 'expo-network';
 import * as ImagePicker from 'expo-image-picker';
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import * as DocumentPicker from 'expo-document-picker';
 import * as Sharing from 'expo-sharing';
 import { useRouter } from 'expo-router';
-import { FieldObservation, Language, Location, ModelMetadata, Weather } from '../domain';
+import { FieldObservation, Language, LocalText, Location, ModelMetadata, OrchardInspection, Weather } from '../domain';
+import { appendTree, snapshotWeather } from '../inspection';
+import { reportHtml, reportText } from '../report';
 import { TextKey, translate } from '../i18n';
 import { ApricotOnnxClassifier } from '../adapters/classifier';
 import { FileObservationRepository, ensureStorage, persistPhoto, readJson, root, writeJson } from '../adapters/storage';
@@ -28,6 +31,8 @@ function useScoutState() {
   const [location, setLocation] = useState<Location>({ latitude: 40.15, longitude: 44.04, source: 'default' });
   const [locating, setLocating] = useState(false);
   const [observations, setObservations] = useState<FieldObservation[]>([]);
+  const [inspections, setInspections] = useState<OrchardInspection[]>([]);
+  const [collectionPhoto, setCollectionPhoto] = useState<{ inspectionId: string; uri: string } | null>(null);
   const [weather, setWeather] = useState<Weather | null>(null);
   const [metadata, setMetadata] = useState<ModelMetadata | null>(null);
   const [modelError, setModelError] = useState('MODEL_MISSING');
@@ -70,6 +75,9 @@ function useScoutState() {
       const [items, cachedWeather, preferences] = await Promise.all([repository.list(), weatherService.cached(), readJson<{ language: Language; location: Location }>(`${root}preferences.json`)]);
       if (!alive) return;
       setObservations(items);
+      const collections = await readJson<OrchardInspection[]>(`${root}inspections.json`);
+      if (!alive) return;
+      setInspections(collections ?? []);
       const savedLocation = preferences?.location ?? { latitude: 40.15, longitude: 44.04, source: 'default' };
       setWeather(cachedWeather && sameLocation(cachedWeather.location, savedLocation) ? cachedWeather : null);
       if (preferences) { setLanguage(preferences.language); setLocation(preferences.location); }
@@ -79,7 +87,7 @@ function useScoutState() {
     return () => { alive = false; };
   }, []);
   function start() { setPhoto(null); setDraft(null); setNote(''); router.push('/inspect'); }
-  async function choosePhoto(camera: boolean) {
+  async function choosePhoto(camera: boolean, inspectionId?: string) {
     await task(async () => {
       if (camera && !(await ImagePicker.requestCameraPermissionsAsync()).granted) { Alert.alert(t('error'), t('permission')); return; }
       const options: ImagePicker.ImagePickerOptions = { mediaTypes: ['images'], quality: 1, allowsEditing: false };
@@ -91,7 +99,8 @@ function useScoutState() {
       if (asset.width > 1600 || asset.height > 1600) image.resize(asset.width >= asset.height ? { width: 1600 } : { height: 1600 });
       const rendered = await image.renderAsync();
       const normalized = await rendered.saveAsync({ format: SaveFormat.JPEG, compress: .9 });
-      setPhoto(normalized.uri); setDraft(null); setNote('');
+      if (inspectionId) setCollectionPhoto({ inspectionId, uri: normalized.uri });
+      else { setPhoto(normalized.uri); setDraft(null); setNote(''); }
     });
   }
   async function analyze() {
@@ -182,8 +191,76 @@ function useScoutState() {
       await Sharing.shareAsync(uri, { mimeType: image ? 'image/jpeg' : 'application/json', dialogTitle: t('saved') });
     });
   }
+  async function storeInspection(item: OrchardInspection) {
+    const next = [item, ...inspections.filter(existing => existing.id !== item.id)];
+    await writeJson(`${root}inspections.json`, next);
+    setInspections(next);
+  }
+  async function startCollection(weatherReason?: LocalText) {
+    await task(async () => {
+      const started = Date.now();
+      const id = `walk-${started}-${Math.random().toString(36).slice(2, 8)}`;
+      const snapshot = snapshotWeather(weather, location, started);
+      await storeInspection({ schemaVersion: 1, id, createdAt: new Date(started).toISOString(), location: { ...location },
+        status: 'in_progress', note: '', observations: [], weather: snapshot, weatherReason: snapshot ? weatherReason : undefined });
+      setCollectionPhoto(null);
+      router.push(`/scout/${id}`);
+    });
+  }
+  async function addCollectionTree(id: string) {
+    if (collectionPhoto?.inspectionId !== id) return;
+    const photoUri = collectionPhoto.uri;
+    await task(async () => {
+      const inspection = inspections.find(item => item.id === id);
+      if (!inspection || inspection.status !== 'in_progress' || inspection.observations.length >= 5) return;
+      await new Promise<void>(resolve => setTimeout(resolve, 40));
+      const treeId = `tree-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+      let observation: FieldObservation = { schemaVersion: 1, id: treeId, crop: 'apricot', createdAt: new Date().toISOString(),
+        imageUri: photoUri, location: { ...inspection.location }, decision: 'unavailable', farmerNote: '', advisoryId: 'unavailable', reviewStatus: 'not_requested', syncStatus: 'local' };
+      if (metadata) {
+        const prediction = await classifier.classify(photoUri);
+        const decision = decide(prediction, metadata);
+        observation = { ...observation, prediction, decision, advisoryId: decision === 'possible' ? prediction.conditionId : 'uncertain' };
+      }
+      observation.imageUri = await persistPhoto(photoUri, treeId);
+      await storeInspection(appendTree(inspection, observation));
+      setCollectionPhoto(null);
+    });
+  }
+  async function editCollection(id: string, update: { note?: string; finish?: boolean; removeLast?: boolean }) {
+    await task(async () => {
+      const item = inspections.find(inspection => inspection.id === id);
+      if (!item || item.status !== 'in_progress') return;
+      if (update.finish && !item.observations.length) return;
+      await storeInspection({ ...item, note: update.note === undefined ? item.note : update.note.trim().slice(0, 1000),
+        status: update.finish ? 'complete' : item.status, observations: update.removeLast ? item.observations.slice(0, -1) : item.observations });
+      if (update.finish || update.removeLast) setCollectionPhoto(null);
+    });
+  }
+  async function shareReport(items: FieldObservation[], includeLocation: boolean, inspection?: OrchardInspection, textOnly = false) {
+    await task(async () => {
+      const text = reportText(items, language, includeLocation, inspection);
+      if (textOnly) { await Share.share({ message: text, title: t('reportTitle') }); return; }
+      if (Platform.OS === 'web') throw new Error('NATIVE_BUILD_REQUIRED');
+      if (!(await Sharing.isAvailableAsync())) throw new Error('Sharing is unavailable on this device');
+      const photos = [];
+      for (const [index, item] of items.entries()) {
+        const image = ImageManipulator.manipulate(item.imageUri);
+        image.resize({ width: 480 });
+        const rendered = await image.renderAsync();
+        const thumbnail = await rendered.saveAsync({ format: SaveFormat.JPEG, compress: .75, base64: true });
+        if (!thumbnail.base64) throw new Error('Could not prepare report photo');
+        photos.push({ label: `${t('tree')} ${index + 1}`, base64: thumbnail.base64 });
+      }
+      await ensureStorage();
+      const uri = `${root}exports/berqo-report-${inspection?.id ?? items[0].id}-${Date.now()}.html`;
+      await FS.writeAsStringAsync(uri, reportHtml(text, photos, language));
+      await Sharing.shareAsync(uri, { mimeType: 'text/html', UTI: 'public.html', dialogTitle: t('shareReport') });
+    });
+  }
   return { language, location, observations, weather, metadata, modelError, photo, draft, note, setNote, busy, locating, online, now, t,
     start, choosePhoto, analyze, save, queue, sync, refreshWeather, useGps, preferences, installModel, share,
+    inspections, collectionPhoto, startCollection, addCollectionTree, editCollection, shareReport,
     sampleWeather: () => setWeather(demoWeather(location)), failNext: () => { demoAdapter.failNext = true; Alert.alert(t('demo'), t('failDemo')); } };
 }
 type State = ReturnType<typeof useScoutState>;

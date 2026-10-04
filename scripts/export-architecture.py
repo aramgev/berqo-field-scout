@@ -26,6 +26,15 @@ DOCUMENT_DATE = ''
 # Shared diagram definitions drive both the SVG source illustrations and the PDF.
 # Coordinates use a top-left origin. Box labels remain selectable PDF text.
 DIAGRAMS = {
+    'inspection': (218, [
+        (0, 0, 145, 58, '1. Standalone collection\nOptional weather entry'),
+        (169, 0, 145, 58, '2. Freeze context\nLocation + forecast'),
+        (338, 0, 145, 58, '3. Up to five trees\nOne photo each'),
+        (338, 134, 145, 58, '4. Sequential local AI\nSame safety gates'),
+        (169, 134, 145, 58, '5. Save + summarize\nKeep uncertainty'),
+        (0, 134, 145, 58, '6. User shares report\nText or photo HTML'),
+    ], [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)],
+        'Figure 4. Collections are independent of single-photo Passports. Sampling is not orchard prevalence estimation.'),
     'system': (242, [
         (0, 0, 483, 38, 'Expo Router screens | English + Armenian'),
         (0, 56, 483, 38, 'FieldScoutProvider | actions, state and readiness'),
@@ -61,7 +70,7 @@ DIAGRAMS = {
         (169, 134, 145, 58, '5. Forecast display\n3 days + upcoming hours'),
         (0, 134, 145, 58, '6. 48-hour suggestions\nFrost / rain / soil check'),
     ], [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)],
-        'Figure 4. Cached forecasts remain accessible offline; suggestions stop after 24 hours without refresh.'),
+        'Figure 5. Cached forecasts remain accessible offline; suggestions stop after 24 hours without refresh.'),
 }
 
 def anchors(a, b):
@@ -129,7 +138,7 @@ def inline(text):
 for name, path in [('BerqoBody', 'arial.ttf'), ('BerqoBold', 'arialbd.ttf')]:
     pdfmetrics.registerFont(TTFont(name, str(Path('C:/Windows/Fonts') / path)))
 pdfmetrics.registerFontFamily('BerqoBody', normal='BerqoBody', bold='BerqoBold', italic='BerqoBody', boldItalic='BerqoBold')
-BODY = ParagraphStyle('Body', fontName='BerqoBody', fontSize=10.2, leading=14.7, textColor=colors.HexColor(INK), spaceAfter=9)
+BODY = ParagraphStyle('Body', fontName='BerqoBody', fontSize=10.2, leading=14.4, textColor=colors.HexColor(INK), spaceAfter=8)
 HEADING = ParagraphStyle('Heading', parent=BODY, fontName='BerqoBold', fontSize=17, leading=21, spaceBefore=20, spaceAfter=11, keepWithNext=True)
 CAPTION = ParagraphStyle('Caption', parent=BODY, fontSize=8.5, leading=12, textColor=colors.HexColor(MUTED), spaceAfter=12)
 DIAGRAM_TEXT = ParagraphStyle('Diagram', parent=BODY, fontSize=9.2, leading=13, alignment=TA_CENTER, spaceAfter=0)
@@ -172,6 +181,8 @@ def export():
         block = block.strip()
         if not block or block.startswith('# ') or block.startswith('Apricot Field Scout |'): continue
         if block.startswith('## '):
+            if block.startswith('## 13.'):
+                story.append(PageBreak())
             heading = Paragraph(inline(block[3:]), HEADING)
             if index + 1 < len(blocks) and blocks[index + 1].startswith('!['):
                 name = re.search(r'diagrams/(\w+)\.svg', blocks[index + 1]).group(1)

@@ -27,6 +27,11 @@ export type Weather = {
   days?: { date: string; minimum: number; maximum: number; rain: number }[];
 };
 export type OrchardRisk = { id: string; severity: 'attention' | 'watch'; title: LocalText; summary: LocalText; sourceUrl: string; demo: boolean };
+export type OrchardInspection = {
+  schemaVersion: 1; id: string; createdAt: string; location: Location;
+  status: 'in_progress' | 'complete'; note: string; observations: FieldObservation[];
+  weather?: Weather; weatherReason?: LocalText;
+};
 export interface CropClassifier { initialize(): Promise<ModelMetadata>; classify(imageUri: string): Promise<Prediction>; }
 export interface ObservationRepository { list(): Promise<FieldObservation[]>; save(item: FieldObservation): Promise<void>; }
 export interface WeatherService { refresh(location: Location): Promise<Weather>; cached(): Promise<Weather | null>; }
