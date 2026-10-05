@@ -109,7 +109,7 @@ function useScoutState() {
       await new Promise<void>(resolve => setTimeout(resolve, 40));
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
       const base: FieldObservation = { schemaVersion: 1, id, crop: 'apricot', createdAt: new Date().toISOString(),
-        imageUri: photo, location: { ...location }, decision: 'unavailable', farmerNote: '', advisoryId: 'unavailable', reviewStatus: 'not_requested', syncStatus: 'local' };
+        imageUri: photo, location: { ...location }, weather: snapshotWeather(weather, location, Date.now()), decision: 'unavailable', farmerNote: '', advisoryId: 'unavailable', reviewStatus: 'not_requested', syncStatus: 'local' };
       if (metadata) {
         const prediction = await classifier.classify(photo);
         const decision = decide(prediction, metadata);

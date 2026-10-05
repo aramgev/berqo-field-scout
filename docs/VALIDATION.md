@@ -46,3 +46,12 @@ The model evaluation is a random image split of AgriVision-Apricot, with exact/i
 - Architecture PDF exported with ten pages, four vector diagrams, selectable text and valid source links; all page renders visually reviewed. NotebookLM prompt, Codex/Cursor maintenance rules and jury guide are included.
 
 - Berqo 1.0.4 installed successfully over 1.0.3 on the Galaxy S25. Native app process starts and scoped logs show Running main with no JS/Android runtime error. The source logo is byte-for-byte identical to the supplied file.
+
+
+## Working source design update (5 October 2026, unbuilt)
+
+- TypeScript, Expo ESLint and all 23 application tests pass. New tests cover uncertainty/unavailable title and care routing, bilingual source-backed plans, saved single-check weather, and coordinates excluded from readable reports by default.
+- No package/dependency, model, confidence gate or inference-input change. Locked dependencies restored with npm ci for local checks.
+- Actual Expo web home and capture flow inspected at 390 x 844. Labeled local-only fixtures using the actual screens/components inspected result, five-tree summary, missing AI, missing weather, English/Armenian copy and expandable details; Armenian uncertainty checked at 320 x 780. Fixture data is not an inference result or real orchard observation.
+- Architecture PDF and SVG diagrams regenerated. Thirteen PDF pages rendered with Poppler and visually reviewed.
+- New APK build, physical Android regression, native sharing, accessibility-reader testing, large system-font testing and local agronomist review of translated care remain pending. Existing APK/jury ZIP links still refer to the prior release. Replace NotebookLM snapshots after refreshing the deliverables.

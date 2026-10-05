@@ -16,7 +16,7 @@ export type Advisory = { id: string; title: LocalText; summary: LocalText; sourc
 export type FieldObservation = {
   schemaVersion: 1; id: string; crop: 'apricot'; createdAt: string; imageUri: string;
   location?: Location; prediction?: Prediction; decision: 'possible' | 'uncertain' | 'unavailable';
-  farmerNote: string; advisoryId: string;
+  farmerNote: string; advisoryId: string; weather?: Weather;
   reviewStatus: 'not_requested' | 'queued_for_review' | 'submitted' | 'reviewed';
   syncStatus: 'local' | 'queued' | 'synced' | 'failed'; syncError?: string;
 };
@@ -26,7 +26,7 @@ export type Weather = {
   timezone?: string;
   days?: { date: string; minimum: number; maximum: number; rain: number }[];
 };
-export type OrchardRisk = { id: string; severity: 'attention' | 'watch'; title: LocalText; summary: LocalText; sourceUrl: string; demo: boolean };
+export type OrchardRisk = { id: string; severity: 'attention' | 'watch'; title: LocalText; action: LocalText; summary: LocalText; sourceUrl: string; demo: boolean };
 export type OrchardInspection = {
   schemaVersion: 1; id: string; createdAt: string; location: Location;
   status: 'in_progress' | 'complete'; note: string; observations: FieldObservation[];

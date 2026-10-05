@@ -1,5 +1,7 @@
 # Berqo
 
+Working source update, 5 October 2026: the redesigned Check one tree / Walk the orchard experience, automatic saved-weather context and curated care steps are not yet included in the APK or jury ZIP linked below. The link remains the latest built 1.0.5 release. Replace the APK, jury pack and NotebookLM snapshots after packaging and phone verification.
+
 Standalone public-safe React Native app for apricot growers: select/capture a photo, run a small model locally, communicate uncertainty, save a Field Passport and inspect weather reminders. English and Armenian. No account, AI API key or private Berqo service is needed inside the app.
 
 ## Current readiness

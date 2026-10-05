@@ -19,9 +19,9 @@
 <text x="410.5" y="159.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#193B2B">4. Parse + cache</text>
 <text x="410.5" y="173.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#193B2B">Hourly UTC / local days</text>
 <rect x="169" y="134" width="145" height="58" rx="7" fill="#EDF2E7" stroke="#CDD7C8"/>
-<text x="241.5" y="159.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#193B2B">5. Forecast display</text>
-<text x="241.5" y="173.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#193B2B">3 days + upcoming hours</text>
+<text x="241.5" y="159.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#193B2B">5. Compact forecast</text>
+<text x="241.5" y="173.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#193B2B">Expandable daily detail</text>
 <rect x="0" y="134" width="145" height="58" rx="7" fill="#EDF2E7" stroke="#CDD7C8"/>
-<text x="72.5" y="159.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#193B2B">6. 48-hour suggestions</text>
-<text x="72.5" y="173.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#193B2B">Frost / rain / soil check</text>
+<text x="72.5" y="159.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#193B2B">6. Automatic context</text>
+<text x="72.5" y="173.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#193B2B">Photo + walk results</text>
 </svg>

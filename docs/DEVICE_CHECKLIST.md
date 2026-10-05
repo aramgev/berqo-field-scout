@@ -48,3 +48,14 @@ Run on the standalone preview APK, not Expo Go. Fill in results after actual obs
 Evidence to record for judging: phone model, Android version, APK build ID, model bytes/version, offline inference milliseconds, held-out metrics, known wrong predictions, and a screen recording of airplane mode → upload → analyze → save → restart → history.
 
 Basic acceptance confirmed by the user on Galaxy S25 / Android 16, signed build `a032a3fe-fbd4-46cb-a3b2-ee8dc15c0062`. Remaining unchecked items are additional checks, not claimed complete.
+
+
+## Design update: repeat on the next APK (working source, 5 October 2026)
+
+- [ ] Confirm camera/gallery labels and photo replacement; one selected photo runs the same offline classifier from either source.
+- [ ] Check finding-first layout, visible Save check action, and uncertainty-specific retake guidance in both languages.
+- [ ] Verify saved weather appears automatically for a single check and a walk; unavailable, stale or wrong-location weather is omitted. Reopening an older check must retain its original forecast.
+- [ ] Finish/resume one-to-five-tree walks. Confirm independent counts and next steps; open each tree finding and remove the last tree through its details before finishing.
+- [ ] Share the readable report and check photo, notes, care/source, forecast and opt-in coordinates. No expert delivery claim.
+- [ ] Open the information page; confirm the original limitations/privacy content remains accessible. Demo tools belong in Settings.
+- [ ] Check soft keyboard, large font settings and screen-reader navigation on the phone. Have a local agronomist review English/Armenian care guidance.

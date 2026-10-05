@@ -27,11 +27,11 @@ DOCUMENT_DATE = ''
 # Coordinates use a top-left origin. Box labels remain selectable PDF text.
 DIAGRAMS = {
     'inspection': (218, [
-        (0, 0, 145, 58, '1. Standalone collection\nOptional weather entry'),
-        (169, 0, 145, 58, '2. Freeze context\nLocation + forecast'),
+        (0, 0, 145, 58, '1. Walk the orchard\nDifferent trees'),
+        (169, 0, 145, 58, '2. Automatic context\nLocation + forecast'),
         (338, 0, 145, 58, '3. Up to five trees\nOne photo each'),
         (338, 134, 145, 58, '4. Sequential local AI\nSame safety gates'),
-        (169, 134, 145, 58, '5. Save + summarize\nKeep uncertainty'),
+        (169, 134, 145, 58, '5. Compare + next steps\nKeep uncertainty'),
         (0, 134, 145, 58, '6. User shares report\nText or photo HTML'),
     ], [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)],
         'Figure 4. Collections are independent of single-photo Passports. Sampling is not orchard prevalence estimation.'),
@@ -50,7 +50,7 @@ DIAGRAMS = {
         (338, 0, 145, 58, '3. Model tensor\n224 x 224 RGB'),
         (338, 134, 145, 58, '4. MobileNetV3 Small\nONNX native CPU'),
         (169, 134, 145, 58, '5. Score + margin gate\nPossible or uncertain'),
-        (0, 134, 145, 58, '6. Field Passport\nPhoto + note + JSON'),
+        (0, 134, 145, 58, '6. Finding + care steps\nSave + weather + report'),
     ], [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)],
         'Figure 2. The photo path stays on the phone. Model input resize is separate from saved evidence.'),
     'training': (218, [
@@ -67,8 +67,8 @@ DIAGRAMS = {
         (169, 0, 145, 58, '2. Save location fix\nSource + accuracy + time'),
         (338, 0, 145, 58, '3. Coordinate request\nOpen-Meteo / internet'),
         (338, 134, 145, 58, '4. Parse + cache\nHourly UTC / local days'),
-        (169, 134, 145, 58, '5. Forecast display\n3 days + upcoming hours'),
-        (0, 134, 145, 58, '6. 48-hour suggestions\nFrost / rain / soil check'),
+        (169, 134, 145, 58, '5. Compact forecast\nExpandable daily detail'),
+        (0, 134, 145, 58, '6. Automatic context\nPhoto + walk results'),
     ], [(0, 1), (1, 2), (2, 3), (3, 4), (4, 5)],
         'Figure 5. Cached forecasts remain accessible offline; suggestions stop after 24 hours without refresh.'),
 }

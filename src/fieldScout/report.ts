@@ -1,7 +1,9 @@
 import { FieldObservation, Language, OrchardInspection } from './domain';
-import { getAdvisory } from './data/advisories';
+import { getObservationAdvisory } from './data/advisories';
 import { summarizeInspection } from './inspection';
 import { translate } from './i18n';
+import { carePlan } from './care';
+import { evaluateRisk } from './risk';
 
 export function reportText(items: FieldObservation[], language: Language, includeLocation: boolean, inspection?: OrchardInspection): string {
   const t = (key: Parameters<typeof translate>[1]) => translate(language, key);
@@ -9,19 +11,23 @@ export function reportText(items: FieldObservation[], language: Language, includ
   const lines = ['BERQO', t('reportTitle'), `${t('crop')}: ${t('apricot')}`, `${t('date')}: ${inspection?.createdAt ?? items[0]?.createdAt ?? ''}`];
   if (inspection) lines.push(`${t('inspectionState')}: ${t(inspection.status === 'complete' ? 'completeInspection' : 'inProgressInspection')}`);
   lines.push(`${t('sampled')}: ${items.length}`, `${t('suspiciousPhotos')}: ${summary.suspicious}`, `${t('noSymptomsPhotos')}: ${summary.noSymptoms}`, `${t('inconclusivePhotos')}: ${summary.inconclusive}`, t('samplingLimit'));
-  const weather = inspection?.weather;
+  const weather = inspection?.weather ?? (items.length === 1 ? items[0].weather : undefined);
   if (weather) {
     lines.push('', `${t('weather')}: ${weather.source === 'demo' ? t('demo') : 'Open-Meteo'}`, `${t('forecastSnapshot')}: ${weather.fetchedAt}`, t('weatherSnapshotHelp'));
     if (inspection?.weatherReason) lines.push(inspection.weatherReason[language]);
     for (const day of weather.days ?? []) lines.push(`${day.date}: ${day.minimum.toFixed(1)} / ${day.maximum.toFixed(1)} °C; ${day.rain.toFixed(1)} mm`);
+    for (const risk of evaluateRisk(weather, Date.parse(inspection?.createdAt ?? items[0].createdAt))) lines.push(risk.title[language], risk.summary[language], risk.sourceUrl);
   }
   if (inspection?.note) lines.push('', `${t('note')}: ${inspection.note}`);
   items.forEach((item, i) => {
-    lines.push('', `${t('tree')} ${i + 1}`, `${t('date')}: ${item.createdAt}`, getAdvisory(item.advisoryId).title[language]);
+    lines.push('', `${t('tree')} ${i + 1}`, `${t('date')}: ${item.createdAt}`, getObservationAdvisory(item).title[language]);
     if (item.prediction) lines.push(`${t('confidence')}: ${(item.prediction.confidence * 100).toFixed(1)}%; ${item.prediction.modelId} v${item.prediction.modelVersion}`);
     if (item.farmerNote) lines.push(`${t('note')}: ${item.farmerNote}`);
     if (includeLocation && item.location) lines.push(`${t('location')}: ${item.location.latitude.toFixed(5)}, ${item.location.longitude.toFixed(5)} (${item.location.source ?? 'manual'})`);
-    lines.push(getAdvisory(item.advisoryId).summary[language]);
+    lines.push(getObservationAdvisory(item).summary[language]);
+    const plan = carePlan(item);
+    plan.steps.forEach((step, index) => lines.push(`${index + 1}. ${step.title[language]}: ${step.detail[language]}`));
+    if (plan.sourceUrl) lines.push(plan.sourceUrl);
   });
   lines.push('', t('warning'), t('reportReviewHelp'));
   return lines.join('\n');

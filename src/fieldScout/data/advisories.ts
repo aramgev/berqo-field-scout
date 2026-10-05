@@ -1,4 +1,4 @@
-import { Advisory } from '../domain';
+import { Advisory, FieldObservation } from '../domain';
 const sourceUrl = 'https://ipm.ucanr.edu/PMG/C005/m005fpdiseases.html';
 const inspect = { en: 'Photograph several nearby leaves and fruit. Note how many trees are affected. Ask an agronomist to confirm the cause before treatment.', hy: 'Լուսանկարեք մոտակա մի քանի տերև և պտուղ։ Նշեք՝ քանի ծառ է ախտահարված։ Բուժումից առաջ դիմեք գյուղատնտեսի՝ պատճառը հաստատելու համար։' };
 export const advisories: Record<string, Advisory> = {
@@ -15,3 +15,6 @@ export const advisories: Record<string, Advisory> = {
   unavailable: { id: 'unavailable', title: { en: 'Photo recorded • AI unavailable', hy: 'Լուսանկարն արձանագրված է • ԱԲ-ն անհասանելի է' }, summary: { en: 'Save the photo for expert review. Install the apricot model in Settings to enable offline AI. No prediction has been made.', hy: 'Պահպանեք լուսանկարը մասնագետի համար։ Կարգավորումներում տեղադրեք ծիրանի մոդելը՝ անցանց ԱԲ-ն միացնելու համար։ Կանխատեսում չի կատարվել։' } },
 };
 export function getAdvisory(id: string): Advisory { return advisories[id] ?? advisories.uncertain; }
+export function getObservationAdvisory(item: Pick<FieldObservation, 'advisoryId' | 'decision'>): Advisory {
+  return getAdvisory(item.decision === 'unavailable' ? 'unavailable' : item.decision === 'uncertain' ? 'uncertain' : item.advisoryId);
+}

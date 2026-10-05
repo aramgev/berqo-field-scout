@@ -1,5 +1,7 @@
 # Share Berqo with the jury
 
+Working source update, 5 October 2026: the redesigned Check one tree / Walk the orchard experience, automatic saved-weather context and curated care steps are not yet included in the APK or jury ZIP linked below. The link remains the latest built 1.0.5 release. Replace the APK, jury pack and NotebookLM snapshots after packaging and phone verification.
+
 Release: Berqo 1.0.5, Android versionCode 6, ARM64 preview APK, about 75 MB. No Expo Go, developer account, model download, additional training, or AI API key is needed to run it.
 
 ## Fastest route
